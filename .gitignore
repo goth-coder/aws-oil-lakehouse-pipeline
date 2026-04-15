@@ -1,0 +1,67 @@
+# Python (Lambda / Glue)
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+.venv/
+venv/
+env/
+.env
+.env.*
+docs/*
+*.egg-info/
+dist/
+build/
+*.so
+pip-wheel-metadata/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+htmlcov/
+.coverage
+coverage.xml
+
+# Node.js / React Native / Expo
+node_modules/
+.expo/
+.expo-shared/
+dist/
+web-build/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnp/
+.pnp.js
+
+# TypeScript
+*.js.map
+*.d.ts.map
+
+# AWS / Terraform
+.terraform/
+*.tfstate
+*.tfstate.*
+*.tfvars
+.terraform.lock.hcl
+*.zip
+layer/
+
+# OS
+.DS_Store
+Thumbs.db
+*.tmp
+*.swp
+*.swo
+
+# IDEs
+.vscode/
+.idea/
+*.iml
+
+# Architecture / generated
+architecture/*.png
+!architecture/.gitkeep
+
+# Athena results (stored in S3, not in repo)
+athena-results/

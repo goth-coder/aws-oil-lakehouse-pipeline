@@ -1,0 +1,7 @@
+# Dependências do Lambda Layer
+#
+# Runtime Python 3.11 da Lambda já inclui: boto3, botocore
+# Layer AWSSDKPandas-Python311 já inclui: pandas, pyarrow, numpy
+#
+# Único pacote extra necessário:
+requests==2.31.0
