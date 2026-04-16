@@ -10,8 +10,8 @@ import {
 import { THEME } from "./theme";
 import type { DashboardData } from "./types";
 
-const POLL_INTERVAL_MS = 10_000;
-const POLL_MAX_ATTEMPTS = 20;
+const POLL_INTERVAL_MS = 15_000;
+const POLL_MAX_ATTEMPTS = 60; // 60 × 15 s = 15 min (Glue jobs need warm-up time)
 const LS_KEY = "oil_dashboard_v1";
 const LS_TTL_MS = 60 * 60 * 1000;
 
@@ -79,7 +79,15 @@ export default function App() {
     pollRef.current = setInterval(async () => {
       attemptsRef.current += 1;
       if (attemptsRef.current > POLL_MAX_ATTEMPTS) {
-        stopPolling(); setError("Timeout exceeded. The job may still be running."); setLoading(false); return;
+        stopPolling();
+        // Job may have finished even if we stopped polling — attempt a final fetch.
+        try {
+          const fresh = await fetchDashboardData();
+          lsSave(fresh); setDashboardData(fresh);
+        } catch { /* ignore */ }
+        setError("Polling timeout. The job may still be running; data shown may be stale.");
+        setLoading(false);
+        return;
       }
       try {
         if (jobRunId) {

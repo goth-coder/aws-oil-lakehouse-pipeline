@@ -29,6 +29,7 @@ IPEA_URL = (
 
 S3_BUCKET = os.environ["S3_BUCKET"]
 GLUE_JOB_NAME = os.environ["GLUE_JOB_NAME"]
+CACHE_KEY = "cache/dashboard_data.json"
 
 s3 = boto3.client("s3")
 glue = boto3.client("glue")
@@ -112,6 +113,14 @@ def lambda_handler(event, context):  # noqa: ANN001
         df_raw = _scrape_ipea()
         df = _normalize(df_raw)
         _write_parquet(df)
+
+        # Invalidate dashboard cache so the next GET /dashboard/data re-queries
+        # Athena after the Glue job finishes (handles cases where the previous
+        # polling cycle timed out before detecting SUCCEEDED).
+        try:
+            s3.delete_object(Bucket=S3_BUCKET, Key=CACHE_KEY)
+        except Exception:  # noqa: BLE001
+            pass
 
         response = glue.start_job_run(JobName=GLUE_JOB_NAME)
         job_run_id = response["JobRunId"]
